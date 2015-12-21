@@ -7,11 +7,11 @@
 	<groupId>com.accelops</groupId>
 	<artifactId>sanctuary</artifactId>
 	<version>1.0</version>
+    <modules>
+        <module>pegasus-seiya</module>
+    </modules>
 
-	<name>aries-shion</name>
-	<modules>
-		<module>libra-dohko</module>
-	</modules>
+    <name>aries-shion</name>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -25,7 +25,8 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<modules>
-
+                <module>libra-dohko</module>
+                <module>pegasus-seiya</module>
 			</modules>
 		</profile>
 	</profiles>

@@ -1,4 +1,4 @@
-package com.accelops.commons.event;
+package com.accelops.libra.event;
 
 /**
  * Created by kai.zhang on 12/14/2015.
@@ -40,4 +40,5 @@ public enum EventTables {
         }
 
     }
+
 }
