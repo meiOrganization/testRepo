@@ -6,8 +6,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.accelops</groupId>
 	<artifactId>sanctuary</artifactId>
+	<version>1.0</version>
 
 	<name>aries-shion</name>
+	<modules>
+		<module>libra-dohko</module>
+	</modules>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -40,7 +44,7 @@
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
-			<version>3.2.2</version>
+			<version>3.2.1</version>
 		</dependency>
 	</dependencies>
 
