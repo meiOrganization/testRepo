@@ -1,0 +1,86 @@
+PUT /_template/testtemplate
+{
+    "template": "event-*",
+     "settings": {
+          "number_of_shards" : 2,
+          "number_of_replicas" : 1,
+          "index" : {
+               "refresh_interval" : "60s",
+               "query" : {
+                    "default_field" : "rawEventMsg"
+               }
+          }
+     },
+     "mappings" : {
+          "All_Events" : {
+               "dynamic_templates": [
+               {
+                  "message_field": {
+                     "mapping": {
+                        "index": "analyzed",
+                        "omit_norms": true,
+                        "type": "string"
+                     },
+                     "match": "rawEventMsg",
+                     "match_mapping_type": "string"
+                  }
+               },
+                  {
+                         "ip_fields": {
+                              "mapping": {
+                                   "index": "not_analyzed",
+                                   "type": "ip"
+                              },
+                              "match": "*IpAddr",
+                              "match_mapping_type": "string"
+                         }
+                  },
+               {
+                  "string_fields": {
+                     "mapping": {
+                        "index": "not_analyzed",
+                        "ignore_above": 256,
+                        "omit_norms": true,
+                        "type": "string"
+                     },
+                     "match": "*",
+                     "match_mapping_type": "string"
+                  }
+               }
+            ],
+               "_all" : {
+                    "enabled" : false
+            },
+               "properties": {
+                    "phRecvTime": {
+                  "type": "date",
+                  "format": "epoch_millis"
+                    },
+                    "eventId": {
+                  "type": "string",
+                      "index": "not_analyzed",
+                      "ignore_above": 256
+                },
+                    "avgDiskGrowthMBDaily": {
+                  "type": "double"
+                },
+                    "deviceTime": {
+                     "type": "date",
+                  "format": "epoch_millis"
+                    },
+                    "collectorIp": {
+                      "type": "ip",
+                      "index": "not_analyzed"
+                    },
+                    "eventsPerSec": {
+                        "type": "double",
+                        "index": "not_analyzed"
+                    },
+                    "peakEventsPerSec": {
+                        "type": "double",
+                        "index": "not_analyzed"
+                    }
+               }
+          }
+     }
+}
