@@ -1,6 +1,7 @@
 package com.accelops.gemini.sparkES;
 
 import org.apache.hadoop.io.ByteWritable;
+import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -19,14 +20,14 @@ public class SparkSeqTestReader {
             System.exit(-1);
         }
 
-        String filePath = args[0];
+        //String filePath = args[0];
 
         SparkConf sparkConf = new SparkConf().setAppName("TestReader");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
-        JavaPairRDD<LongWritable, ByteWritable> timeEventRDD = sc.sequenceFile(args[0], LongWritable.class, ByteWritable.class);
-        List<ByteWritable> byteWritables = timeEventRDD.values().take(10);
+        JavaPairRDD<LongWritable, BytesWritable> timeEventRDD = sc.sequenceFile(args[0], LongWritable.class, BytesWritable.class);
+        List<BytesWritable> bytesWritables = timeEventRDD.values().take(10);
 
-        for(ByteWritable bw : byteWritables) {
+        for(BytesWritable bw : bytesWritables) {
             System.out.println(bw);
         }
 

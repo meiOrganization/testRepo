@@ -13,9 +13,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.accelops</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>libra-dohko</artifactId>
-            <version>1.0</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.flume</groupId>
