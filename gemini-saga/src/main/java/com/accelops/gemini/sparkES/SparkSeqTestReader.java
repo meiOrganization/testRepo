@@ -28,7 +28,7 @@ public class SparkSeqTestReader {
         JavaPairRDD<LongWritable, BytesWritable> timeEventRDD = sc.sequenceFile(args[0], LongWritable.class, BytesWritable.class);
         List<String> bytesWritables = timeEventRDD.values().map(new Function<BytesWritable, String>() {
             public String call(BytesWritable bytesWritable) {
-                return bytesWritable.toString();
+                return new String(bytesWritable.getBytes(), 0, bytesWritable.getLength());
             }
         }).take(10);
 
