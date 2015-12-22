@@ -9,7 +9,8 @@
 	<version>1.0</version>
     <modules>
         <module>pegasus-seiya</module>
-    </modules>
+		<module>gemini-saga</module>
+	</modules>
 
     <name>aries-shion</name>
 	<packaging>pom</packaging>
