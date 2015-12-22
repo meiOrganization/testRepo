@@ -6,6 +6,7 @@ import org.apache.hadoop.io.LongWritable;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.Function;
 
 import java.util.List;
 
@@ -25,9 +26,13 @@ public class SparkSeqTestReader {
         SparkConf sparkConf = new SparkConf().setAppName("TestReader");
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         JavaPairRDD<LongWritable, BytesWritable> timeEventRDD = sc.sequenceFile(args[0], LongWritable.class, BytesWritable.class);
-        List<BytesWritable> bytesWritables = timeEventRDD.values().take(10);
+        List<String> bytesWritables = timeEventRDD.values().map(new Function<BytesWritable, String>() {
+            public String call(BytesWritable bytesWritable) {
+                return bytesWritable.toString();
+            }
+        }).take(10);
 
-        for(BytesWritable bw : bytesWritables) {
+        for(String bw : bytesWritables) {
             System.out.println(bw);
         }
 
