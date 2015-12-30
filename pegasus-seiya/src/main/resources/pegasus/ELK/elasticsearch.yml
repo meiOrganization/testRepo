@@ -93,8 +93,8 @@ network.host: ec2-52-88-0-57.us-west-2.compute.amazonaws.com
 # <http://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery.html>
 plugin.mandatory: cloud-aws
 cloud.aws.region: us-west-2
-cloud.aws.access_key: AKIAIQIV6WUASMK3WTJQ
-cloud.aws.secret_key: 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
+cloud.aws.access_key: 
+cloud.aws.secret_key: 
 discovery.type: ec2
 discovery.zen.ping.multicast.enabled: false
 discovery.ec2.groups: sg-a80886cc
