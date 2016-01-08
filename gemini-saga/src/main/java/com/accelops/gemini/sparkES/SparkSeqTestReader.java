@@ -26,7 +26,8 @@ public class SparkSeqTestReader {
 
         SparkConf sparkConf = new SparkConf().setAppName("TestReader");
         sparkConf.set("es.index.auto.create", "true");
-        sparkConf.set("es.nodes", "10.0.0.138:9200,10.0.0.139:9200");
+        sparkConf.set("es.nodes", "ec2-52-88-0-134.us-west-2.compute.amazonaws.com:9200," +
+                "ec2-52-88-0-57.us-west-2.compute.amazonaws.com:9200");
 
         JavaSparkContext sc = new JavaSparkContext(sparkConf);
         JavaPairRDD<LongWritable, BytesWritable> timeEventRDD = sc.sequenceFile(args[0], LongWritable.class, BytesWritable.class);
@@ -36,7 +37,7 @@ public class SparkSeqTestReader {
             }
         });
 
-        JavaEsSpark.saveJsonToEs(stringRDD, "accelops-2015.12.22");
+        JavaEsSpark.saveJsonToEs(stringRDD, "accelops-2015.12.22/All_Events");
 
 
     }
