@@ -22,7 +22,7 @@ public class SparkReaderLauncher {
             handle = new SparkLauncher()
                     .setAppResource("/home/admin/gemini-saga-1.0.jar")
                     .setMainClass("com.accelops.gemini.sparkES.SparkSeqTestReader")
-                    .setMaster("spark://ec2-52-33-244-102.us-west-2.compute.amazonaws.com:7077")
+                    .setMaster("spark://ip-10-0-0-248:7077")
                     .setConf(SparkLauncher.DRIVER_MEMORY, "8g")
                     .addAppArgs(args[0])
                     .startApplication();
