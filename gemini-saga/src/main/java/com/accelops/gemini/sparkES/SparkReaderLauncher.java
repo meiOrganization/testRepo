@@ -27,16 +27,18 @@ public class SparkReaderLauncher {
                     .setConf(SparkLauncher.EXECUTOR_EXTRA_JAVA_OPTIONS, args[0])
                     .startApplication();
 
-            if (handle.getState() == SparkAppHandle.State.FINISHED) {
-                System.out.println("Job finished successfully");
-            } else {
-                System.out.println("Job failed: " + handle.getState().name());
+            while(!handle.getState().isFinal()) {
+                System.out.println("Job running: "  + handle.getState().name());
+                Thread.sleep(10);
             }
 
+            System.out.println("Job finished: " + handle.getState().name());
+
         } catch (IOException e) {
-
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
 
 
     }
