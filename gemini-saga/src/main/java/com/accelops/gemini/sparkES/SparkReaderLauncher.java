@@ -30,7 +30,7 @@ public class SparkReaderLauncher {
             if (handle.getState() == SparkAppHandle.State.FINISHED) {
                 System.out.println("Job finished successfully");
             } else {
-                System.out.println("Job failed");
+                System.out.println("Job failed: " + handle.getState().name());
             }
 
         } catch (IOException e) {
