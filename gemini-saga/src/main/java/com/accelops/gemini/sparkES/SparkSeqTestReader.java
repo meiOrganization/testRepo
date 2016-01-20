@@ -22,8 +22,6 @@ public class SparkSeqTestReader {
             System.exit(-1);
         }
 
-        //String filePath = args[0];
-
         SparkConf sparkConf = new SparkConf().setAppName("TestReader");
         sparkConf.set("es.index.auto.create", "true");
         sparkConf.set("es.nodes", "ec2-52-88-0-134.us-west-2.compute.amazonaws.com:9200," +
