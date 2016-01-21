@@ -34,6 +34,8 @@ public class SparkReaderLauncher {
 
             System.out.println("Job finished: " + handle.getState().name());
 
+            handle.stop();
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
