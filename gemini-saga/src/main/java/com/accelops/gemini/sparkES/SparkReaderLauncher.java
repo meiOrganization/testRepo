@@ -34,8 +34,6 @@ public class SparkReaderLauncher {
 
             System.out.println("Job finished: " + handle.getState().name());
 
-            handle.stop();
-
             Thread.sleep(10000);
 
             System.out.println("Exit");
