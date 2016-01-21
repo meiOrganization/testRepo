@@ -36,6 +36,10 @@ public class SparkReaderLauncher {
 
             handle.stop();
 
+            Thread.sleep(10000);
+
+            System.out.println("Exit");
+
         } catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
