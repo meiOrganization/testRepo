@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.accelops.libra.event.EventAttributes;
 import com.accelops.libra.event.EventCategories;
-import com.accelops.libra.event.EventTables;
+import com.accelops.libra.event.EventTable;
 import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.interceptor.Interceptor;
@@ -35,7 +35,7 @@ public class TimeCateInterceptor implements Interceptor {
         int bTest = eventInJson.path(EventAttributes.testEvent.name()).asInt();
 
         event.getHeaders().put(FlumeHeader.timestamp.name(), timeInMillis);
-        event.getHeaders().put(FlumeHeader.category.name(), EventTables.getTableByCategory(category, bTest).name());
+        event.getHeaders().put(FlumeHeader.category.name(), EventTable.getTableByCategory(category, bTest).name());
 
     }
 
@@ -61,7 +61,7 @@ public class TimeCateInterceptor implements Interceptor {
 
         } catch (IOException | IllegalArgumentException e) {
 
-            event.getHeaders().put(FlumeHeader.category.name(), EventTables.error.name());
+            event.getHeaders().put(FlumeHeader.category.name(), EventTable.error.name());
             event.getHeaders().put(FlumeHeader.timestamp.name(), Long.toString(System.currentTimeMillis()));
 
         }

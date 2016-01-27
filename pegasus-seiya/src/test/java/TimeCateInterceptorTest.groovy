@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.accelops.libra.event.EventAttributes
-import com.accelops.libra.event.EventTables
+import com.accelops.libra.event.EventTable
 import org.apache.flume.Event
 import org.apache.flume.event.SimpleEvent
 import org.junit.Test
@@ -38,7 +38,7 @@ class TimeCateInterceptorTest extends groovy.util.GroovyTestCase {
         assertTrue(headers.containsKey(FlumeHeader.timestamp.name()));
         assertEquals("1434576605000", headers.get(FlumeHeader.timestamp.name()));
         assertTrue(headers.containsKey("category"));
-        assertEquals(EventTables.internal.name(), headers.get(FlumeHeader.category.name()));
+        assertEquals(EventTable.internal.name(), headers.get(FlumeHeader.category.name()));
 
         ObjectMapper mapper;
         mapper = new ObjectMapper(new JsonFactory());
