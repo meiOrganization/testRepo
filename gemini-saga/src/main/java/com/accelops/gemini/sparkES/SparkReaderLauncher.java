@@ -136,7 +136,7 @@ public class SparkReaderLauncher {
         CommunicationType cType = getTypeFromId(type);
         switch (cType) {
             case EXPORT_DATA: {
-                ingestionJobManager.addJob(requestCmd, resultBuffer);
+                ingestionJobManager.addRequest(requestCmd, resultBuffer);
                 break;
             }
             case EXPORT_DATA_STATUS: {

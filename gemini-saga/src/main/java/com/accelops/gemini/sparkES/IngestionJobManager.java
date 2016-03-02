@@ -1,5 +1,6 @@
 package com.accelops.gemini.sparkES;
 
+import com.accelops.libra.event.EventTable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -19,44 +20,13 @@ public class IngestionJobManager {
     Log log  = LogFactory.getLog(getClass());
 
     Queue<IngestionJob> jobQueue = new LinkedList<>();
-    Map<Integer, IngestionJob> jobStatus = new TreeMap<>();
+    Map<Integer, IngestionRequest> requestStatus = new TreeMap<>();
     ReadWriteLock lock = new ReentrantReadWriteLock();
-    Thread thread = new Thread(new IngestionJobExecutor());
+    Thread thread = new Thread(new IngestionJobExecutor(this));
 
     public boolean initialize() {
         thread.start();
         return true;
-    }
-
-    public void addJob(String request, ByteBuffer resultBuffer) {
-
-        if(request == null) {
-            resultBuffer.clear();
-            resultBuffer.putInt(StatusCode.UNKNOWN_REQUEST.getCode());
-            return;
-        }
-
-        try {
-            addNewJob(new IngestionJob(IngestionRequestParser.buildFromXml(request)));
-        } catch (IngestionRequestParsingException e) {
-            log.error("Failed to parse query: " + e.getMessage() + ", request: " + request);
-            resultBuffer.clear();
-            resultBuffer.putInt(StatusCode.REQUEST_XML_SYNTAX_ERROR.getCode());
-        } catch (Exception e) {
-            log.error("Failed to parse query: " + e.getMessage() + ", request: " + request);
-            resultBuffer.clear();
-            resultBuffer.putInt(StatusCode.INTERNAL_ERR.getCode());
-        }
-
-    }
-
-    public void addNewJob(IngestionJob job) {
-
-        lock.writeLock().lock();
-        jobQueue.add(job);
-        jobStatus.put(job.getRequestId(), job);
-        lock.writeLock().unlock();
-
     }
 
     public IngestionJob getJob() {
@@ -70,13 +40,67 @@ public class IngestionJobManager {
 
     }
 
-    public void getStatus(String request, ByteBuffer resultBuffer) {
+    public void getStatus(String requestCmd, ByteBuffer resultBuffer) {
 
-        int requestId = Integer.parseInt(request);
-        lock.readLock().lock();
-        jobStatus.get(requestId).getStatus(resultBuffer);
-        lock.readLock().unlock();
+        int requestId;
+        try {
+            requestId = Integer.parseInt(requestCmd);
+        } catch (NumberFormatException e) {
+            //TODO-Kai: add failure resultBuffer
+            return;
+        }
+
+        try {
+            lock.readLock().lock();
+            IngestionRequest request = requestStatus.get(requestId);
+            if (request == null) {
+                //TODO-Kai: add failure resultBuffer
+                return;
+            }
+            request.getStatus(resultBuffer);
+        } finally {
+            lock.readLock().unlock();
+        }
 
     }
 
+    public void addRequest(String requestCmd, ByteBuffer resultBuffer) {
+
+        if(requestCmd == null) {
+            resultBuffer.clear();
+            resultBuffer.putInt(StatusCode.UNKNOWN_REQUEST.getCode());
+            return;
+        }
+
+        try {
+            IngestionRequest request = IngestionRequestParser.buildFromXml(requestCmd);
+            addRequest(request);
+        } catch (IngestionRequestParsingException e) {
+            log.error("Failed to parse query: " + e.getMessage() + ", request: " + requestCmd);
+            resultBuffer.clear();
+            resultBuffer.putInt(StatusCode.REQUEST_XML_SYNTAX_ERROR.getCode());
+        } catch (Exception e) {
+            log.error("Failed to parse query: " + e.getMessage() + ", request: " + requestCmd);
+            resultBuffer.clear();
+            resultBuffer.putInt(StatusCode.INTERNAL_ERR.getCode());
+        }
+
+    }
+
+    private void addRequest(IngestionRequest request) {
+
+        request.evaluateLoad();
+        try {
+            lock.writeLock().lock();
+            requestStatus.put(request.getRequestId(), request);
+            request.addJobs(jobQueue, this);
+        } finally {
+            lock.writeLock().unlock();
+        }
+
+    }
+
+    public IngestionJobStatus getJobStatus(EventTable eventTable, int day) {
+        return IngestionJobStatus.Unknown;
+    }
 }

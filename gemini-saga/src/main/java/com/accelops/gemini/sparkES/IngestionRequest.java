@@ -4,6 +4,7 @@ import com.accelops.libra.event.EventTable;
 import com.accelops.libra.utils.Constant;
 import com.accelops.libra.utils.TimeRange;
 
+import java.nio.ByteBuffer;
 import java.util.*;
 
 /**
@@ -11,9 +12,11 @@ import java.util.*;
  */
 public class IngestionRequest {
 
-    private int requestId;
-    //private TreeMap<Integer, Integer> todoRanges = new TreeMap<Integer, Integer>();
-    private ArrayList<TimeRange> todoList = new ArrayList<>();
+    private int requestId = -1;
+    private int startDay = 0;
+    private int endDay = 0;
+    private int load = 0;
+    private int progress = 0;
     private TreeSet<EventTable> eventTables = new TreeSet<>();
 
     public void setRequestId(int requestId) {
@@ -24,15 +27,9 @@ public class IngestionRequest {
         return this.requestId;
     }
 
-    public void addRange(long low, long high) {
-        int start = (int)(low/ Constant.SECONDS_IN_DAY);
-        int end = (int)Math.ceil((double)high/Constant.SECONDS_IN_DAY);
-        if(start > end) {
-            int temp = start;
-            start = end;
-            end = temp;
-        }
-        todoList.add(new TimeRange(start, end));
+    public void setRange(long low, long high) {
+        this.startDay = (int)Math.floor((double) low / Constant.SECONDS_IN_DAY);
+        this.endDay = (int)Math.ceil((double) high / Constant.SECONDS_IN_DAY);
     }
 
     public void addEventTable(EventTable eventTable) {
@@ -44,4 +41,41 @@ public class IngestionRequest {
     }
 
 
+    public void getStatus(ByteBuffer resultBuffer) {
+    }
+
+    public synchronized int getProgress() {
+        return (progress * 100 / load);
+    }
+
+    public synchronized void evaluateLoad() {
+        load = (endDay - startDay + 1) * eventTables.size();
+    }
+
+    public void addJobs(final Queue<IngestionJob> jobQueue, final IngestionJobManager ingestionJobManager) {
+        for(EventTable eventTable : eventTables) {
+            for(int day = startDay; day <= endDay; ++day) {
+                IngestionJobStatus jobStatus = ingestionJobManager.getJobStatus(eventTable, day);
+                switch(jobStatus) {
+                    case Unknown: {
+                        jobQueue.add(new IngestionJob(eventTable, day));
+                        break;
+                    }
+                    case Running: {
+                        //Do nothing
+                        break;
+                    }
+                    case Finished: {
+                        progress++;
+                    }
+                }
+            }
+        }
+    }
+
+    public synchronized void  updateProgress(EventTable eventTable, int day) {
+        if(eventTables.contains(eventTable) && day <= endDay && day >= startDay) {
+            progress++;
+        }
+    }
 }

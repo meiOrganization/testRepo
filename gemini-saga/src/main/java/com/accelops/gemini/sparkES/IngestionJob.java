@@ -1,5 +1,7 @@
 package com.accelops.gemini.sparkES;
 
+import com.accelops.libra.event.EventTable;
+
 import java.nio.ByteBuffer;
 
 /**
@@ -7,22 +9,19 @@ import java.nio.ByteBuffer;
  */
 public class IngestionJob {
 
-    private IngestionRequest request;
+    int day;
+    EventTable eventTable;
 
     public IngestionJob() {}
 
-    public IngestionJob(IngestionRequest request) {
-        this.request = request;
-    }
+    public IngestionJob(EventTable eventTable, int day) {
 
-    public void setIngestionRequest(IngestionRequest request) {
-        this.request = request;
-    }
+        this.day = day;
+        this.eventTable = eventTable;
 
-    public int getRequestId() {
-        return request.getRequestId();
     }
 
     public void getStatus(ByteBuffer resultBuffer) {
     }
+
 }

@@ -42,10 +42,24 @@ public class IngestionRequestParser {
 
         Element root = doc.getDocumentElement();
         IngestionRequest request = new IngestionRequest();
-
+        parseRequestId(root, request);
         parseTimeRange(getOnlyElementByTagName(root, "TimeRange"), request);
         parseEventTable(getOnlyElementByTagName(root, "EventTables"), request);
         return null;
+    }
+
+    private static void parseRequestId(Element root, IngestionRequest request)
+            throws IngestionRequestParsingException{
+        String requestId = root.getAttribute("RequestId");
+        if(requestId.isEmpty()) {
+            throw new IngestionRequestParsingException("Request Id is empty.");
+        }
+
+        try {
+            request.setRequestId(Integer.parseInt(requestId));
+        } catch (NumberFormatException e) {
+            throw new IngestionRequestParsingException("Failed to parse request Id:" + requestId);
+        }
     }
 
     private static void parseTimeRange(Element element, IngestionRequest request)
@@ -73,7 +87,7 @@ public class IngestionRequestParser {
             }
         }
 
-        request.addRange(startTime, endTime);
+        request.setRange(startTime, endTime);
 
     }
 
